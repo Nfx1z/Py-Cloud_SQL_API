@@ -1,4 +1,5 @@
 import os
+import secrets
 
 class Config:
     # Cloud SQL configuration (for production on Google Cloud)
@@ -11,9 +12,15 @@ class Config:
     # DB_HOST = 'localhost'
     # DB_PORT = 3306
 
+    # JWT authentication
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+
     # Google Cloud configuration
     GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
     # Flask configuration
     SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key')
     DEBUG = os.getenv('DEBUG', True)
+
+def generate_secret_key():
+    secret_key = secrets.token_hex(16)

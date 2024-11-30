@@ -17,6 +17,8 @@ def mysql_db_connection():
             password=Config.DB_PASSWORD,
             db=Config.DB_NAME,
         )
+        # Check connection
+        print("Connected to Cloud SQL database")
     else:
         # For local development (assuming MySQL is running on localhost)
         connection = mysql.connector.connect(
@@ -25,5 +27,7 @@ def mysql_db_connection():
             password=Config.DB_PASSWORD,
             database=Config.DB_NAME
         )
+        # Check connection
+        print("Connected to MySQL database")
     
     return connection

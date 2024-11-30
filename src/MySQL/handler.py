@@ -1,11 +1,13 @@
 from src.MySQL.db import get_db_connection
 
-def fetch_data_from_db():
-
-    conn = get_db_connection()
+def fetch_data_from_db(query, table):
+    try:
+        conn = get_db_connection()
+    except Exception as e:
+        return f'Error connecting to database: {str(e)}'
     cursor = conn.cursor(dictionary=True)
     
-    cursor.execute('SELECT * FROM your_table LIMIT 5')
+    cursor.execute(f'SELECT * FROM {table} LIMIT 5')
     rows = cursor.fetchall()
 
     cursor.close()
