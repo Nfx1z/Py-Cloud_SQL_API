@@ -1,5 +1,4 @@
 from flask import Blueprint, jsonify, request
-from src.handler import fetch_data_from_db, add_data_to_db
 from src.controller import home_controller, user_config_controller
 
 # Define a Blueprint to organize the routes
@@ -21,18 +20,3 @@ def home():
 def user_config():
     return user_config_controller(request)
 
-@bp.route('/')
-def index():
-    # Get the token from the 'Authorization' header
-    token = request.headers.get('Authorization')  
-    rows = fetch_data_from_db()
-    return jsonify(rows)
-
-@bp.route('/add', methods=['POST'])
-def add_entry():
-    data = request.get_json()
-    name = data.get('name')
-    age = data.get('age')
-
-    add_data_to_db(name, age)
-    return jsonify({'message': 'Data added successfully!'})
