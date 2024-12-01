@@ -1,6 +1,6 @@
 import jwt
 import secrets
-from session.config import Config
+from src.session.config import Config
 from dotenv import set_key
 
 # Generate a random secret key for JWT authentication

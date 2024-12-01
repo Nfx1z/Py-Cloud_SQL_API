@@ -1,13 +1,13 @@
 import os
 from flask import Flask
 from flask_cors import CORS
-from server.routes import bp
+from src.server.routes import bp
 
 
 app = Flask(__name__)
 
 # Load configurations from config.py
-app.config.from_object('config.Config')
+# app.config.from_object('config.Config')
 
 # Register the SQL routes blueprint
 app.register_blueprint(bp)

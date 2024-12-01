@@ -1,34 +1,28 @@
-import mysql.connector
-from google.cloud import sqlconnector
-from session.config import Config
+from flask_sqlalchemy import SQLAlchemy
+from src.session.config import Config
+from dotenv import set_key
 
-def get_db_connection(db_name, db_user, db_password):
+db = SQLAlchemy()
+
+def init_db(app):
+    app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URI
+    db.init_app(app)
+
+def get_db_uri(db_name, db_user, db_password):
     try:
         # Cloud SQL connection
         if Config.CLOUD_SQL_CONNECTION_NAME:
-            # Using google-cloud-sql-connector to connect to Cloud SQL securely
-            connector = sqlconnector.connect(
-                instance_connection_string=Config.CLOUD_SQL_CONNECTION_NAME,
-                driver="mysql",
-            )
-            # connect to database
-            connection = connector.connect(
-                user=db_user,
-                password=db_password,
-                db=db_name,
-            )
-            # Check connection
-            print("Connected to Cloud SQL database")
+            # connect to Cloud SQL
+            print("Connecting to Cloud SQL...")
+            uri = f"mysql+mysqlconnector://{db_user}:{db_password}@/cloudsql/{Config.CLOUD_SQL_CONNECTION_NAME}/{db_name}"
         else:
-            # For local development (assuming MySQL is running on localhost)
-            connection = mysql.connector.connect(
-                host="localhost",
-                user=db_user,
-                password=db_password,
-                database=db_name
-            )
             # Check connection
-            print("Connected to MySQL database")
-        return True, connection
+            print("Connecting to local MySQL...")
+            uri = f"mysql+mysqlconnector://{db_user}:{db_password}@localhost:3306/{db_name}"
+        
+        # Set the SQLALCHEMY_DATABASE_URI in the .env file
+        set_key('.env', 'SQLALCHEMY_DATABASE_URI', uri)
+
+        return True, "Successfully created database URI"
     except Exception as e:
         return False, f'Error connecting to database: {str(e)}'
