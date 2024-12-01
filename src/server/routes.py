@@ -1,14 +1,23 @@
 from flask import Blueprint, jsonify, request
-from src.MySQL.handler import fetch_data_from_db, add_data_to_db
+from src.handler import fetch_data_from_db, add_data_to_db
+from src.controller import home_controller
 
 # Define a Blueprint to organize the routes
 sql_bp = Blueprint('routes', __name__)
+
+@sql_bp.route('/', methods=['GET'])
+def home():
+    token = request.cookies.get('SQL_TOKEN')
+    if not token:
+        return jsonify({'error': 'No token provided'}), 401
+    
+    return home_controller(token)
 
 @sql_bp.route('/user/config', methods=['POST'])
 def user_config():
 
     data = request.get_json()
-
+    
     password = data.get('password')
     dbname = data.get('dbname')
 
@@ -26,6 +35,8 @@ def user_config():
 
 @sql_bp.route('/')
 def index():
+    # Get the token from the 'Authorization' header
+    token = request.headers.get('Authorization')  
     rows = fetch_data_from_db()
     return jsonify(rows)
 

@@ -1,6 +1,6 @@
 import mysql.connector
 from google.cloud import sqlconnector
-from src.config import Config
+from session.config import Config
 
 def mysql_db_connection():
 

@@ -1,4 +1,4 @@
-from src.MySQL.db import get_db_connection
+from src.db import get_db_connection
 
 def fetch_data_from_db(query, table):
     try:

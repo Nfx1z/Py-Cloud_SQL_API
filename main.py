@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_cors import CORS
-from server.mysql_routes import sql_bp
+from server.routes import sql_bp
 
 
 app = Flask(__name__)
