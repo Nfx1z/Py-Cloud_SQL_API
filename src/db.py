@@ -2,7 +2,7 @@ import mysql.connector
 from google.cloud import sqlconnector
 from session.config import Config
 
-def mysql_db_connection():
+def get_db_connection(db_name, db_user, db_password):
 
     # Cloud SQL connection
     if Config.CLOUD_SQL_CONNECTION_NAME:
@@ -13,9 +13,9 @@ def mysql_db_connection():
         )
         # connect to database
         connection = connector.connect(
-            user=Config.DB_USER,
-            password=Config.DB_PASSWORD,
-            db=Config.DB_NAME,
+            user=db_user,
+            password=db_password,
+            db=db_name,
         )
         # Check connection
         print("Connected to Cloud SQL database")
@@ -23,9 +23,9 @@ def mysql_db_connection():
         # For local development (assuming MySQL is running on localhost)
         connection = mysql.connector.connect(
             host="localhost",
-            user=Config.DB_USER,
-            password=Config.DB_PASSWORD,
-            database=Config.DB_NAME
+            user=db_user,
+            password=db_password,
+            database=db_name
         )
         # Check connection
         print("Connected to MySQL database")

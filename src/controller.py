@@ -1,5 +1,6 @@
 from src.handler import fetch_data_from_db, add_data_to_db
 from src.session.cookies import verify_jwt, generate_jwt
+from src.db import get_db_connection
 from flask import jsonify, make_response
 from src.session.config import Config
 
@@ -12,6 +13,7 @@ def user_config_controller(request):
     if not db_name or not db_user or not db_password:
         return jsonify({"error": "Both 'db_name', 'db_user', and 'db_password' are required"}), 400
     
+
     token = generate_jwt(db_name, db_user, db_password)
     success_message = (
         jsonify({"status_code": 200, "message": "User configuration received successfully!", "token": token}),
