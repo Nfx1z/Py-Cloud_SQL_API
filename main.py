@@ -6,9 +6,6 @@ from src.server.routes import bp
 
 app = Flask(__name__)
 
-# Load configurations from config.py
-# app.config.from_object('config.Config')
-
 # Register the SQL routes blueprint
 app.register_blueprint(bp)
 
