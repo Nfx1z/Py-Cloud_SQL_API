@@ -13,12 +13,22 @@ def user_config_controller(request):
     if not db_name or not db_user or not db_password:
         return jsonify({"error": "Both 'db_name', 'db_user', and 'db_password' are required"}), 400
     
-
+    # Validate database credentials
+    isValid, conn = get_db_connection(db_name, db_user, db_password)
+    if not isValid:
+        return jsonify({"error": conn}), 400
+    
+    # Generate JWT token for the user's configuration
     token = generate_jwt(db_name, db_user, db_password)
     success_message = (
-        jsonify({"status_code": 200, "message": "User configuration received successfully!", "token": token}),
+        jsonify({"status_code": 200, "message": "User configuration received successfully!"}),
     )
+
+    # Set cookie
     response = make_response(success_message, 200)
+    response.set_cookie(
+        "SQL_TOKEN", token, httponly=True, samesite="lax", expires=Config.EXPIRES
+    )
 
 def home_controller(token):
     user_id = verify_jwt(token)
