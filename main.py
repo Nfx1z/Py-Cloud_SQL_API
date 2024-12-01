@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_cors import CORS
-from server.routes import sql_bp
+from server.routes import bp
 
 
 app = Flask(__name__)
@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.config.from_object('config.Config')
 
 # Register the SQL routes blueprint
-app.register_blueprint(sql_bp)
+app.register_blueprint(bp)
 
 # Enable CORS for all endpoints
 CORS(
