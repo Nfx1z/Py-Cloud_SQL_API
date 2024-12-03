@@ -6,7 +6,7 @@ class Config:
     # Cloud SQL connection name
     CLOUD_SQL_CONNECTION_NAME = os.getenv('CLOUD_SQL_CONNECTION_NAME')
     # app-liveness:asia-southeast2:db-liveness
-    DB_HOST = 'localhost'
+    DB_HOST = os.getenv('DB_HOST')
 
     # JWT authentication
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
