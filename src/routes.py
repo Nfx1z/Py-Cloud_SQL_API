@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, make_response
-from service.controller import home_controller, user_config_controller
+from service.controller import home_controller, user_controller
 
 # Define a Blueprint to organize the routes
 bp = Blueprint('routes', __name__)
@@ -12,13 +12,13 @@ def based():
 def home():
     token = request.cookies.get('SQL_TOKEN')
     # Check if the token is present
-    # if not token:
-    #     return jsonify({'error': 'No token provided'}), 401
+    if not token:
+        return jsonify({'error': 'No token provided'}), 401
     return home_controller(token)
 
-@bp.route('/user/config', methods=['POST'])
+@bp.route('/user', methods=['POST'])
 def user_config():
-    return user_config_controller(request)
+    return user_controller(request)
 
 @bp.route('/delete_cookie')
 def delete_cookie():

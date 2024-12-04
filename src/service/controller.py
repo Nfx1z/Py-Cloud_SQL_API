@@ -3,7 +3,7 @@ from service.db import test_connection
 from flask import jsonify, make_response
 from src.utils.config import EXPIRES
 
-def user_config_controller(request):
+def user_controller(request):
     try:
         # DB credentials for connection
         db_name = request.json.get('db_name')
@@ -24,10 +24,10 @@ def user_config_controller(request):
 
         # Generate JWT token for the user's configuration
         token = generate_jwt(db_name, db_user, user_password)
-        print(token)
+        
         # Return success message
         success_message = (
-            jsonify({"status_code": 200, "message": "User configuration received successfully!"}), 200
+            jsonify({"status_code": 200, "message": "Connected!"}), 200
         )
 
         # Set cookie

@@ -25,7 +25,26 @@ def test_connection(db_name, db_user, user_password):
     except mysql.connector.Error as error:
         return False, f"error 1: {str(error)}"
     
-
+def get_connection(db_name, db_user, user_password):
+    try:
+        # only for cloud SQL using cloud sql proxy for more secure connection
+        conn = mysql.connector.connect(
+            user=db_user,
+            password=user_password,
+            database=db_name,
+            unix_socket=SOCKET_PATH  # Use the Cloud SQL Unix socket
+        )
+        # this method also works for local connections
+        # conn = mysql.connector.connect(
+        #     user=db_user,
+        #     password=user_password,
+        #     database=db_name,
+        #     host=DB_IP,  # Use the public IP address of the Cloud SQL instance
+        #     port=DB_PORT  # Default MySQL port
+        # )
+        return conn
+    except mysql.connector.Error as error:
+        raise error
 
 # # Initialize SQLAlchemy
 # db = SQLAlchemy()
