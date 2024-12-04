@@ -11,8 +11,8 @@ def generate_secret_key():
     set_key('.env', 'JWT_SECRET_KEY', secret_key)
 
 # Generate a JWT for authentication purposes with user information
-def generate_jwt(db_name, db_user, db_password):
-    payload = {'db_name' : db_name, 'db_user' : db_user, 'db_password' : db_password }
+def generate_jwt(db):
+    payload = {'db' : db}
     token = jwt.encode(payload, Config.JWT_SECRET_KEY, algorithm='HS256')
     return token
 
@@ -20,10 +20,8 @@ def generate_jwt(db_name, db_user, db_password):
 def verify_jwt(token):
     try:
         payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=['HS256'])
-        db_name = payload['db_name']
-        db_user = payload['db_user']
-        db_password = payload['db_password']
-        return db_name, db_user, db_password
+        db = payload.get('db')
+        return db
     except jwt.ExpiredSignatureError:
         raise Exception('Token has expired')
     except jwt.InvalidTokenError:
