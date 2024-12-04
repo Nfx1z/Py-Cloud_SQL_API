@@ -1,6 +1,6 @@
 import jwt
 import secrets
-from src.session.config import Config
+from src.session.config import JWT_SECRET_KEY
 from dotenv import set_key
 
 # Generate a random secret key for JWT authentication
@@ -11,19 +11,23 @@ def generate_secret_key():
     set_key('.env', 'JWT_SECRET_KEY', secret_key)
 
 # Generate a JWT for authentication purposes with user information
-def generate_jwt(db):
-    dbb = db
+def generate_jwt(db_name, db_user, user_password):
     payload = {
-        'db' : dbb}
-    token = jwt.encode(payload, Config.JWT_SECRET_KEY, algorithm='HS256')
+        'db_name': db_name,
+        'db_user': db_user,
+        'user_password': user_password
+        }
+    token = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
     return token
 
 # Decode and verify the JWT
 def verify_jwt(token):
     try:
-        payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=['HS256'])
-        db = payload.get('db')
-        return db
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=['HS256'])
+        db_name = payload.get('db_name')
+        db_user = payload.get('db_user')
+        user_password = payload.get('user_password')
+        return db_name, db_user, user_password
     except jwt.ExpiredSignatureError:
         raise Exception('Token has expired')
     except jwt.InvalidTokenError:

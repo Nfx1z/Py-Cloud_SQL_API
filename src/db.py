@@ -1,50 +1,55 @@
-import os, sys
-from flask import jsonify, has_app_context
-from flask_sqlalchemy import SQLAlchemy
-from src.session.config import Config
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import mysql.connector
+from flask import jsonify
+from src.session.config import  DB_PORT, DB_IP, SOCKET_PATH
 
-# Add the root directory to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-# Initialize SQLAlchemy
-db = SQLAlchemy()
-
-def init_database(db_name, db_user, user_password):
+def test_connection(db_name, db_user, user_password):
     try:
-        # Import the Flask app from the main module
-        from main import app
-        
-        # Construct the MySQL URI
-        # there is bunch of uri pattern that you can use
-        uri = f"mysql+mysqldb://{db_user}:{user_password}@{Config.DB_HOST}/{db_name}?unix_socket=/cloudsql/{Config.CLOUD_SQL_CONNECTION_NAME}"
+        # only for cloud SQL using cloud sql proxy for more secure connection
+        conn = mysql.connector.connect(
+            user=db_user,
+            password=user_password,
+            database=db_name,
+            unix_socket=SOCKET_PATH  # Use the Cloud SQL Unix socket
+        )
+        # this method also works for local connections
+        # conn = mysql.connector.connect(
+        #     user=db_user,
+        #     password=user_password,
+        #     database=db_name,
+        #     host=DB_IP,  # Use the public IP address of the Cloud SQL instance
+        #     port=DB_PORT  # Default MySQL port
+        # )
+        # Close the connection
+        conn.close()
+        return True, jsonify({"message": "Connection successful"}), 200
+    except mysql.connector.Error as error:
+        return False, jsonify({"error": str(error)}), 400
+    
 
-        # Examples without using cloud sql proxy: 
-        # uri = "mysql+mysqldb://<DB_USER>:<USER_PASSWORD>@/<DB_NAME>?unix_socket=/cloudsql/<CONNECTION_NAME>"
-        # uri = "mysql+mysqldb://<DB_USER>:<USER_PASSWORD>@<IP_ADDRESS>/<DB_NAME>?unix_socket=/cloudsql/<CONNECTION_NAME>"
-        # uri = "mysql+pymysql://<DB_USER>:<USER_PASSWORD>@<IP_ADDRESS>:3306/<DB_NAME>"
 
-        # Examples using cloud sql proxy:
-        # uri = "mysql+mysqldb://<DB_USER>:<USER_PASSWORD>@127.0.0.1/<DB_NAME>?unix_socket=/cloudsql/<CONNECTION_NAME>"
-        # uri = "mysql+pymysql://<DB_USER>:<USER_PASSWORD>@127.0.0.1:3306/<DB_NAME>"
+# # Initialize SQLAlchemy
+# db = SQLAlchemy()
 
-        # Set the SQLAlchemy database URI
-        app.config['SQLALCHEMY_DATABASE_URI'] = uri
-        
-        # Set up engine and session maker
-        engine = create_engine(uri)
-        Session = sessionmaker(bind=engine)
+# def init_database(app):
+#     # Construct the MySQL URI
+#     # there is bunch of uri pattern that you can use
+#     uri = f"mysql+mysqldb://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}?unix_socket=/cloudsql/{CLOUD_SQL_CONNECTION_NAME}"
 
-        # Initialize session
-        session = Session()
+#     # Examples without using cloud sql proxy for cloud SQL connections: 
+#     # uri = f"mysql+mysqldb://{DB_USER}:{USER_PASSWORD}@/{DB_NAME}?unix_socket=/cloudsql/{CONNECTION_NAME}"
+#     # uri = f"mysql+mysqldb://{DB_USER}:{USER_PASSWORD}@{IP_ADDRESS}/{DB_NAME}?unix_socket=/cloudsql/{CONNECTION_NAME}"
+#     # uri = f"mysql+pymysql://{DB_USER}:{USER_PASSWORD}@{IP_ADDRESS}:{DB_PORT}/{DB_NAME}"
+#     # Examples using cloud sql proxy for cloud SQL connections:
+#     # uri = f"mysql+mysqldb://{DB_USER}:{USER_PASSWORD}@127.0.0.1/{DB_NAME}?unix_socket=/cloudsql/{CONNECTION_NAME}"
+#     # uri = f"mysql+pymysql://{DB_USER}:{USER_PASSWORD}@127.0.0.1:{DB_PORT}/{DB_NAME}"
 
-        # Disable SQLAlchemy tracking for better performance
-        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#     # For local connections
+#     # uri = f"mysql+mysqldb://{DB_USER}:{USER_PASSWORD}@localhost/{DB_NAME}"
 
-        db.init_app(app)
-        # session.close()
+#     # Set the SQLAlchemy database URI
+#     app.config['SQLALCHEMY_DATABASE_URI'] = uri
+    
+#     # Disable SQLAlchemy tracking for better performance
+#     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-        return True, "success"
-    except Exception as e:
-        return False, f"error: {str(e)}"
+#     db.init_app(app)

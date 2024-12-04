@@ -1,7 +1,7 @@
 from src.session.cookies import verify_jwt, generate_jwt, generate_secret_key
-from src.db import init_database, db
+from src.db import test_connection
 from flask import jsonify, make_response
-from src.session.config import Config
+from src.session.config import EXPIRES
 
 def user_config_controller(request):
     try:
@@ -15,15 +15,17 @@ def user_config_controller(request):
             return jsonify({"error": "Both 'db_name', 'db_user', and 'user_password' are required"}), 400
 
         # Initiate database connection
-        isValid, err_or_db = init_database(db_name, db_user, user_password)
+        isValid, message = test_connection(db_name, db_user, user_password)
         if not isValid:
-            return jsonify({"error": err_or_db}), 400
+            return jsonify({"error": message}), 400
         
         # Generate secret key for the user's configuration
         generate_secret_key()
 
         # Generate JWT token for the user's configuration
-        token = generate_jwt(err_or_db)
+        token = generate_jwt(db_name, db_user, user_password)
+
+        # Return success message
         success_message = (
             jsonify({"status_code": 200, "message": "User configuration received successfully!"}), 200
         )
@@ -31,7 +33,7 @@ def user_config_controller(request):
         # Set cookie
         response = make_response(success_message)
         response.set_cookie(
-            "SQL_TOKEN", token, httponly=True, samesite="lax", expires=Config.EXPIRES
+            "SQL_TOKEN", token, httponly=True, samesite="lax", expires=EXPIRES
         )
 
         return response
@@ -39,12 +41,10 @@ def user_config_controller(request):
         return jsonify({"error": str(e)}), 500
 
 def home_controller(token):
-    message = verify_jwt(token)
-    if message == 'success':
-        return jsonify({"status_code": 200, "message": "Home page"}), 200
-    else:
-        return jsonify({"error": message}), 401
-    # isValid, message = get_db_connection(db_name, db_user, user_password)
+    try:
+        db_name, db_user, user_password = verify_jwt(token)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     # if not isValid:
     #     return jsonify({"error": message}), 400
 
