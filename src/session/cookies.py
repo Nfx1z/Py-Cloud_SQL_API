@@ -6,13 +6,15 @@ from dotenv import set_key
 # Generate a random secret key for JWT authentication
 def generate_secret_key():
     # Generate a random secret key
-    secret_key = secrets.token_hex(16)
+    secret_key = secrets.token_hex(6)
     # Set the secret key in the '.env' file
     set_key('.env', 'JWT_SECRET_KEY', secret_key)
 
 # Generate a JWT for authentication purposes with user information
 def generate_jwt(db):
-    payload = {'db' : db}
+    dbb = db
+    payload = {
+        'db' : dbb}
     token = jwt.encode(payload, Config.JWT_SECRET_KEY, algorithm='HS256')
     return token
 

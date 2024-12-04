@@ -12,7 +12,7 @@ class Config:
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 
     # Expired token after 15 minutes
-    EXPIRES = datetime.datetime.now() + datetime.timedelta(minutes=15)
+    EXPIRES = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
 
     # Google Cloud configuration
     GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')

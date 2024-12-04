@@ -1,19 +1,21 @@
 import os, sys
-from flask import jsonify
+from flask import jsonify, has_app_context
 from flask_sqlalchemy import SQLAlchemy
 from src.session.config import Config
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 # Add the root directory to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+# Initialize SQLAlchemy
+db = SQLAlchemy()
+
 def init_database(db_name, db_user, user_password):
     try:
-        # Initialize SQLAlchemy
-        db = SQLAlchemy()
-
         # Import the Flask app from the main module
         from main import app
-
+        
         # Construct the MySQL URI
         # there is bunch of uri pattern that you can use
         uri = f"mysql+mysqldb://{db_user}:{user_password}@{Config.DB_HOST}/{db_name}?unix_socket=/cloudsql/{Config.CLOUD_SQL_CONNECTION_NAME}"
@@ -29,11 +31,20 @@ def init_database(db_name, db_user, user_password):
 
         # Set the SQLAlchemy database URI
         app.config['SQLALCHEMY_DATABASE_URI'] = uri
+        
+        # Set up engine and session maker
+        engine = create_engine(uri)
+        Session = sessionmaker(bind=engine)
+
+        # Initialize session
+        session = Session()
 
         # Disable SQLAlchemy tracking for better performance
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
         db.init_app(app)
-        return True, db
+        # session.close()
+
+        return True, "success"
     except Exception as e:
         return False, f"error: {str(e)}"

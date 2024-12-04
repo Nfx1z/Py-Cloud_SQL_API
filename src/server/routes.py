@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 from src.controller import home_controller, user_config_controller
 
 # Define a Blueprint to organize the routes
@@ -20,3 +20,15 @@ def home():
 def user_config():
     return user_config_controller(request)
 
+@bp.route('/delete_cookie')
+def delete_cookie():
+    # Create a response object
+    response = make_response( jsonify("Cookie has been deleted."))
+    
+    # Set the cookie expiration date in the past (e.g., one day ago)
+    response.set_cookie('SQL_TOKEN', '', expires=0)
+    
+    # Alternatively, set a max-age of 0 to delete the cookie
+    # response.set_cookie('my_cookie', '', max_age=0)
+    
+    return response
