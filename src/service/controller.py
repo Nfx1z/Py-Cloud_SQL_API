@@ -1,7 +1,7 @@
-from src.session.cookies import verify_jwt, generate_jwt, generate_secret_key
-from src.db import test_connection
+from src.utils.cookies import verify_jwt, generate_jwt, generate_secret_key
+from service.db import test_connection
 from flask import jsonify, make_response
-from src.session.config import EXPIRES
+from src.utils.config import EXPIRES
 
 def user_config_controller(request):
     try:
@@ -11,7 +11,7 @@ def user_config_controller(request):
         user_password = request.json.get('user_password')
         
         # Validate input parameters
-        if not db_name or not db_user:
+        if not db_name or not db_user or not user_password:
             return jsonify({"error": "Both 'db_name', 'db_user', and 'user_password' are required"}), 400
 
         # Initiate database connection
@@ -24,7 +24,7 @@ def user_config_controller(request):
 
         # Generate JWT token for the user's configuration
         token = generate_jwt(db_name, db_user, user_password)
-
+        print(token)
         # Return success message
         success_message = (
             jsonify({"status_code": 200, "message": "User configuration received successfully!"}), 200
@@ -43,6 +43,7 @@ def user_config_controller(request):
 def home_controller(token):
     try:
         db_name, db_user, user_password = verify_jwt(token)
+        return jsonify({"status_code": 200, "message": "Home page"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     # if not isValid:

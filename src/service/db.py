@@ -1,6 +1,6 @@
 import mysql.connector
 from flask import jsonify
-from src.session.config import  DB_PORT, DB_IP, SOCKET_PATH
+from src.utils.config import  DB_PORT, DB_IP, SOCKET_PATH
 
 def test_connection(db_name, db_user, user_password):
     try:
@@ -21,9 +21,9 @@ def test_connection(db_name, db_user, user_password):
         # )
         # Close the connection
         conn.close()
-        return True, jsonify({"message": "Connection successful"}), 200
+        return True, f"message: Connection successful"
     except mysql.connector.Error as error:
-        return False, jsonify({"error": str(error)}), 400
+        return False, f"error 1: {str(error)}"
     
 
 
