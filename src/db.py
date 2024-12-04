@@ -6,7 +6,7 @@ from src.session.config import Config
 # Add the root directory to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-def init_database(db_name, db_ip, db_user, db_password):
+def init_database(db_name, db_user, user_password):
     try:
         # Initialize SQLAlchemy
         db = SQLAlchemy()
@@ -16,7 +16,7 @@ def init_database(db_name, db_ip, db_user, db_password):
 
         # Construct the MySQL URI
         # there is bunch of uri pattern that you can use
-        uri = f"mysql+mysqldb://{db_user}:{db_password}@{db_ip}/{db_name}?unix_socket=/cloudsql/{Config.PROJECT_ID}:{Config.INSTANCE_NAME}"
+        uri = f"mysql+mysqldb://{db_user}:{user_password}@{Config.DB_HOST}/{db_name}?unix_socket=/cloudsql/{Config.CLOUD_SQL_CONNECTION_NAME}"
 
         # Examples without using cloud sql proxy: 
         # uri = "mysql+mysqldb://<DB_USER>:<USER_PASSWORD>@/<DB_NAME>?unix_socket=/cloudsql/<CONNECTION_NAME>"
@@ -37,18 +37,3 @@ def init_database(db_name, db_ip, db_user, db_password):
         return True, db
     except Exception as e:
         return False, f"error: {str(e)}"
-
-# def init_db(app):
-#     app.config['SQLALCHEMY_DATABASE_URI'] = generate_uri(
-#         Config.DB_NAME, Config.DB_USER, Config.DB_PASSWORD
-#     )
-#     db.init_app(app)
-
-def get_db_connection(db_name, db_user, db_password):
-    try:
-        # For local development
-        
-
-        return True
-    except Exception as e:
-        return False, jsonify({"error": "uv", "message": "Error connecting to database in "}), 500

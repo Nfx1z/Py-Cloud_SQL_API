@@ -1,6 +1,5 @@
-from src.handler import fetch_data_from_db, add_data_to_db
-from src.session.cookies import verify_jwt, generate_jwt
-from src.db import init_database, get_db_connection
+from src.session.cookies import verify_jwt, generate_jwt, generate_secret_key
+from src.db import init_database
 from flask import jsonify, make_response
 from src.session.config import Config
 
@@ -20,6 +19,9 @@ def user_config_controller(request):
         if not isValid:
             return jsonify({"error": err_or_db}), 400
         
+        # Generate secret key for the user's configuration
+        generate_secret_key()
+
         # Generate JWT token for the user's configuration
         token = generate_jwt(err_or_db)
         success_message = (
@@ -37,9 +39,9 @@ def user_config_controller(request):
         return jsonify({"error": str(e)}), 500
 
 def home_controller(token):
-    db_name, db_user, user_password = verify_jwt(token)
-    isValid, message = get_db_connection(db_name, db_user, user_password)
-    if not isValid:
-        return jsonify({"error": message}), 400
+    db = verify_jwt(token)
+    # isValid, message = get_db_connection(db_name, db_user, user_password)
+    # if not isValid:
+    #     return jsonify({"error": message}), 400
 
     return jsonify({"status_code": 200, "message": "Home page"}), 200
