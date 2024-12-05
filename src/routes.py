@@ -4,7 +4,8 @@ from src.controller.controller import (
 )
 from src.controller.tables import (
     get_tables_controller,
-    create_table_controller
+    create_table_controller,
+    describe_table_controller
 )
 from src.controller.contents import (
     get_contents_controller,
@@ -30,6 +31,15 @@ def home():
     if not token:
         return jsonify({'error': 'No token provided'}), 401
     return get_tables_controller(token)
+
+@bp.route('/table/describe', methods=['GET'])
+def describe_table():
+    token = request.cookies.get('SQL_TOKEN')
+    table = request.json.get('table')
+    # Check if the token is present
+    if not token:
+        return jsonify({'error': 'No token provided'}), 401
+    return describe_table_controller(token, table)
 
 @bp.route('/table/create', methods=['POST'])
 def create_table():

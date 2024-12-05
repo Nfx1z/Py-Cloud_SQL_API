@@ -1,5 +1,5 @@
 from src.utils.cookies import generate_jwt, generate_secret_key
-from db import test_connection
+from src.db import test_connection
 from flask import jsonify, make_response
 
 def login_controller(request):

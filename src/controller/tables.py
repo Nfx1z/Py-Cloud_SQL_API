@@ -26,7 +26,7 @@ def get_tables_controller(token):
         conn.close()
 
         # Return results
-        return ({"tables": flattened_result}), 200
+        return ({"database": db_name, "tables": flattened_result}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -69,6 +69,53 @@ def create_table_controller(token, request):
         conn.close()
 
         # Return results
-        return jsonify({"message": "Table created successfully"}), 200
+        return jsonify({"message": "Table created successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def describe_table_controller(token, table_name):
+    try:
+        # Verify and Decode JWT token
+        db_name, db_user, user_password = verify_jwt(token)
+
+        # Initiate database connection
+        conn = get_connection(db_name, db_user, user_password)
+        cursor = conn.cursor()
+
+        # Query database
+        query = f"""
+        DESCRIBE {table_name}
+        """
+        cursor.execute(query)
+        columns = cursor.fetchall()
+
+        # Prepare the formatted output
+        formatted_columns = []
+        for column in columns:
+            name = column[0]  # Column name
+            data_type = column[1]  # Data type
+            is_nullable = "NULL" if column[2] == "YES" else "NOT NULL"  # Nullability
+            key = ""  # Initialize key as empty
+            if column[3] == "PRI":
+                key = "PRIMARY KEY"
+            elif column[3] == "UNI":
+                key = "UNIQUE"
+            extra = column[5]  # Extra info (like auto_increment)
+
+            # Combine all parts into a readable string
+            column_info = f"{name} = {data_type} {is_nullable}"
+            if key:
+                column_info += f" {key}"
+            if extra:
+                column_info += f" {extra}"
+
+            formatted_columns.append(column_info)
+            
+        # Close cursor and connection
+        cursor.close()
+        conn.close()
+
+        # Return results
+        return jsonify({"table": table_name, "columns": formatted_columns}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
