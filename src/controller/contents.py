@@ -28,6 +28,6 @@ def get_contents_controller(token, table_name):
         conn.close()
 
         # Return results
-        return jsonify({"contents": cleaned_result}), 200
+        return jsonify({"table": table_name, "contents": cleaned_result}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
