@@ -1,12 +1,13 @@
 import jwt
 import secrets
+import datetime
 from .config import JWT_SECRET_KEY
 from dotenv import set_key
 
 # Generate a random secret key for JWT authentication
-def generate_secret_key():
+def generate_secret_key(num):
     # Generate a random secret key
-    secret_key = secrets.token_hex(6)
+    secret_key = secrets.token_hex(num)
     # Set the secret key in the '.env' file
     set_key('.env', 'JWT_SECRET_KEY', secret_key)
 
@@ -15,7 +16,8 @@ def generate_jwt(db_name, db_user, user_password):
     payload = {
         'db_name': db_name,
         'db_user': db_user,
-        'user_password': user_password
+        'user_password': user_password,
+        'iat': datetime.datetime.now(),
         }
     token = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
     return token
