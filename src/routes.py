@@ -6,7 +6,8 @@ from src.controller.tables import (
     get_tables_controller,
     create_table_controller,
     describe_table_controller,
-    rename_table_controller
+    rename_table_controller,
+    drop_table_controller
 )
 from src.controller.contents import (
     get_contents_controller,
@@ -53,7 +54,7 @@ def create_table():
         return jsonify({'error': 'No token provided'}), 401
     return create_table_controller(token, request)
 
-@bp.route('/table/rename', methods=['POST'])
+@bp.route('/table/rename', methods=['PUT'])
 def rename_table():
     token = request.cookies.get('SQL_TOKEN')
     table = request.json.get('table')
@@ -65,6 +66,18 @@ def rename_table():
     if not table or not new_table:
         return jsonify({'error': 'No table or new_table provided'}), 401
     return rename_table_controller(token, table, new_table)
+
+@bp.route('/table/drop', methods=['DELETE'])
+def drop_table():
+    token = request.cookies.get('SQL_TOKEN')
+    table = request.json.get('table')
+    # Check if the token is present
+    if not token:
+        return jsonify({'error': 'No token provided'}), 401    
+    # Check if the table is present
+    if not table:
+        return jsonify({'error': 'No table provided'}), 401
+    return drop_table_controller(token, table)
 
 # =============================================================================================
 @bp.route('/contents', methods=['GET'])
