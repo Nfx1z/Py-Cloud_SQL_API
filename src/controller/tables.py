@@ -119,3 +119,27 @@ def describe_table_controller(token, table_name):
         return jsonify({"table": table_name, "columns": formatted_columns}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+def rename_table_controller(token, table_name, new_table_name):
+    try:
+        # Verify and Decode JWT token
+        db_name, db_user, user_password = verify_jwt(token)
+
+        # Initiate database connection
+        conn = get_connection(db_name, db_user, user_password)
+        cursor = conn.cursor()
+
+        # Query database
+        query = f"""
+        RENAME TABLE `{table_name}` TO `{new_table_name}`;
+        """
+        cursor.execute(query)
+
+        # Close cursor and connection
+        cursor.close()
+        conn.close()
+
+        # Return results
+        return jsonify({"message": f"Table '{table_name}' renamed to '{new_table_name}' successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
