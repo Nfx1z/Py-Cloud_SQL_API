@@ -17,7 +17,7 @@ def generate_jwt(db_name, db_user, user_password):
         'db_name': db_name,
         'db_user': db_user,
         'user_password': user_password,
-        'iat': datetime.datetime.now(),
+        'exp': datetime.datetime.now()
         }
     token = jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
     return token
