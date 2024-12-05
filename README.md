@@ -22,3 +22,14 @@ gcloud auth application-default print-access-token -->
 <!-- cloud-sql-proxy my-project:your-connection-name -->
 run this command to connect
 cloud-sql-proxy --gcloud-auth project-001-cloud-storage:us-central1:ucup **this the right one**
+
+```json
+{
+  "table_name": "employees",
+  "columns": [
+    {"name": "coloumn_name", "type": "data_type"},
+    {"name": "coloumn_name", "type": "data_type"},
+    {"name": "coloumn_name", "type": "data_type"}
+  ]
+}
+```

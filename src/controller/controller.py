@@ -1,8 +1,8 @@
 from src.utils.cookies import verify_jwt, generate_jwt, generate_secret_key
-from src.service.db import test_connection, get_connection
+from db import test_connection, get_connection
 from flask import jsonify, make_response
 
-def user_controller(request):
+def login_controller(request):
     try:
         # DB credentials for connection
         db_name = request.json.get('db_name')
@@ -29,12 +29,12 @@ def user_controller(request):
 
         # Generate JWT token for the user's configuration
         token = generate_jwt(db_name, db_user, user_password)
-        print(token)
+
         # Set cookie
         response.set_cookie(
             "SQL_TOKEN", token, 
             secure=True, httponly=True, 
-            samesite=None, max_age=30
+            samesite=None, max_age=60*15 # 15 minutes
         )
 
         return response
@@ -57,36 +57,14 @@ def get_tables_controller(token):
         cursor.execute(query)
         tables = cursor.fetchall()
 
-        # Close cursor and connection
-        cursor.close()
-        conn.close()
-
-        # Return results
-        return ({"tables": tables}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-def get_contents_controller(token, table_name):
-    try:
-        # Verify and Decode JWT token
-        db_name, db_user, user_password = verify_jwt(token)
-
-        # Initiate database connection
-        conn = get_connection(db_name, db_user, user_password)
-        cursor = conn.cursor()
-
-        # Query database
-        query = f"""
-        SELECT * FROM {table_name};
-        """
-        cursor.execute(query)
-        contents = cursor.fetchall()
+        # Flatten the result
+        flattened_result = [item[0] for item in tables]
 
         # Close cursor and connection
         cursor.close()
         conn.close()
 
         # Return results
-        return jsonify({"contents": contents}), 200
+        return ({"tables": flattened_result}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
