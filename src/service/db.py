@@ -19,6 +19,7 @@ def test_connection(db_name, db_user, user_password):
         #     host=DB_IP,  # Use the public IP address of the Cloud SQL instance
         #     port=DB_PORT  # Default MySQL port
         # )
+        
         # Close the connection
         conn.close()
         return True, f"message: Connection successful"
