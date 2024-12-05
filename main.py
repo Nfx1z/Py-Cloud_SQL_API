@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_cors import CORS
-from src.server.routes import bp
+from src.routes import bp
 
 
 app = Flask(__name__)
