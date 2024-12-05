@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request
 from src.controller.controller import ( 
-    login_controller,
-    get_tables_controller,
+    login_controller,    
 )
 from src.controller.tables import (
+    get_tables_controller,
     create_table_controller
 )
 from src.controller.contents import (

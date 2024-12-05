@@ -2,6 +2,34 @@ from flask import jsonify
 from src.utils.cookies import verify_jwt
 from src.db import get_connection
 
+def get_tables_controller(token):
+    try:
+        # Verify and Decode JWT token
+        db_name, db_user, user_password = verify_jwt(token)
+        
+        # Initiate database connection
+        conn = get_connection(db_name, db_user, user_password)
+        cursor = conn.cursor()
+
+        # Query database
+        query = f"""
+        SHOW TABLES FROM {db_name};
+        """
+        cursor.execute(query)
+        tables = cursor.fetchall()
+
+        # Flatten the result
+        flattened_result = [item[0] for item in tables]
+
+        # Close cursor and connection
+        cursor.close()
+        conn.close()
+
+        # Return results
+        return ({"tables": flattened_result}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 def create_table_controller(token, request):
     try:
         # Get table name and columns
@@ -11,6 +39,7 @@ def create_table_controller(token, request):
         # Validate input parameters
         if not table_name or not columns:
             return jsonify({"error": "Both 'table_name' and 'columns' are required"}), 400
+        
         # Verify and Decode JWT token
         db_name, db_user, user_password = verify_jwt(token)
         

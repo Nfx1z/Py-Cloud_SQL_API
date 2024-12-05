@@ -1,5 +1,5 @@
-from src.utils.cookies import verify_jwt, generate_jwt, generate_secret_key
-from db import test_connection, get_connection
+from src.utils.cookies import generate_jwt, generate_secret_key
+from db import test_connection
 from flask import jsonify, make_response
 
 def login_controller(request):
@@ -38,33 +38,5 @@ def login_controller(request):
         )
 
         return response
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-def get_tables_controller(token):
-    try:
-        # Verify and Decode JWT token
-        db_name, db_user, user_password = verify_jwt(token)
-        
-        # Initiate database connection
-        conn = get_connection(db_name, db_user, user_password)
-        cursor = conn.cursor()
-
-        # Query database
-        query = f"""
-        SHOW TABLES FROM {db_name};
-        """
-        cursor.execute(query)
-        tables = cursor.fetchall()
-
-        # Flatten the result
-        flattened_result = [item[0] for item in tables]
-
-        # Close cursor and connection
-        cursor.close()
-        conn.close()
-
-        # Return results
-        return ({"tables": flattened_result}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
