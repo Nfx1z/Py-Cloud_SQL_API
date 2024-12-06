@@ -33,12 +33,12 @@ def get_tables_controller(token):
 def create_table_controller(token, request):
     try:
         # Get table name and columns
-        table_name = request.json.get('table_name')
+        table = request.json.get('table')
         columns = request.json.get('columns')
 
         # Validate input parameters
-        if not table_name or not columns:
-            return jsonify({"error": "Both 'table_name' and 'columns' are required"}), 400
+        if not table or not columns:
+            return jsonify({"error": "Both 'table' and 'columns' are required"}), 400
         
         # Verify and Decode JWT token
         db_name, db_user, user_password = verify_jwt(token)
@@ -57,7 +57,7 @@ def create_table_controller(token, request):
         
         # Query database
         query = f"""
-        CREATE TABLE `{table_name}` (
+        CREATE TABLE `{table}` (
             id INT AUTO_INCREMENT PRIMARY KEY,
             {columns_str}
         );
@@ -69,11 +69,11 @@ def create_table_controller(token, request):
         conn.close()
 
         # Return results
-        return jsonify({"message": f"Table '{table_name}' created successfully"}), 201
+        return jsonify({"message": f"Table '{table}' created successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-def describe_table_controller(token, table_name):
+def describe_table_controller(token, table):
     try:
         # Verify and Decode JWT token
         db_name, db_user, user_password = verify_jwt(token)
@@ -84,7 +84,7 @@ def describe_table_controller(token, table_name):
 
         # Query database
         query = f"""
-        DESCRIBE {table_name}
+        DESCRIBE {table}
         """
         cursor.execute(query)
         columns = cursor.fetchall()
@@ -116,11 +116,11 @@ def describe_table_controller(token, table_name):
         conn.close()
 
         # Return results
-        return jsonify({"table": table_name, "columns": formatted_columns}), 200
+        return jsonify({"table": table, "columns": formatted_columns}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-def rename_table_controller(token, table_name, new_table_name):
+def rename_table_controller(token, table, new_table):
     try:
         # Verify and Decode JWT token
         db_name, db_user, user_password = verify_jwt(token)
@@ -131,7 +131,7 @@ def rename_table_controller(token, table_name, new_table_name):
 
         # Query database
         query = f"""
-        RENAME TABLE `{table_name}` TO `{new_table_name}`;
+        RENAME TABLE `{table}` TO `{new_table}`;
         """
         cursor.execute(query)
 
@@ -140,11 +140,11 @@ def rename_table_controller(token, table_name, new_table_name):
         conn.close()
 
         # Return results
-        return jsonify({"message": f"Table '{table_name}' renamed to '{new_table_name}' successfully"}), 200
+        return jsonify({"message": f"Table '{table}' renamed to '{new_table}' successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-def drop_table_controller(token, table_name):
+def drop_table_controller(token, table):
     try:
         # Verify and Decode JWT token
         db_name, db_user, user_password = verify_jwt(token)
@@ -155,7 +155,7 @@ def drop_table_controller(token, table_name):
 
         # Query database
         query = f"""
-        DROP TABLE `{table_name}`;
+        DROP TABLE `{table}`;
         """
         cursor.execute(query)
 
@@ -164,6 +164,6 @@ def drop_table_controller(token, table_name):
         conn.close()
 
         # Return results
-        return jsonify({"message": f"Table '{table_name}' dropped successfully"}), 200
+        return jsonify({"message": f"Table '{table}' dropped successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
