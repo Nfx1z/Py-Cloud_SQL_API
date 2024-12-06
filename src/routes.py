@@ -11,6 +11,7 @@ from src.controller.tables import (
 )
 from src.controller.contents import (
     get_contents_controller,
+    insert_contents_controller
 )
 
 # Define a Blueprint to organize the routes
@@ -91,3 +92,11 @@ def get_tables():
     if not table:
         return jsonify({'error': 'No table provided'}), 401
     return get_contents_controller(token, table)
+
+@bp.route('/content/insert', methods=['POST'])
+def insert_into_table():
+    token = request.cookies.get('SQL_TOKEN')
+    # Check if the token is present
+    if not token:
+        return jsonify({'error': 'No token provided'}), 401
+    return insert_contents_controller(token, request)
