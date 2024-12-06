@@ -1,5 +1,7 @@
 # Cloud SQL API for MySQL
 
+## Setup
+
 Reinforcement Learning
 
 `cloud-sql-proxy.exe` in `Program Files` Folder and the path to system environment variable.
@@ -31,5 +33,39 @@ cloud-sql-proxy --gcloud-auth project-001-cloud-storage:us-central1:ucup **this 
     {"name": "coloumn_name", "type": "data_type"},
     {"name": "coloumn_name", "type": "data_type"}
   ]
+}
+```
+
+### Response /contents
+
+```json
+{
+    "contents": [
+        {
+            "age": 30,
+            "id": 1,
+            "name": "budi",
+            "salary": "3000.20"
+        },
+        {
+            "age": 30,
+            "id": 2,
+            "name": "asdfa",
+            "salary": "300.20"
+        },
+        {
+            "age": 30,
+            "id": 3,
+            "name": "asdfa",
+            "salary": "300.20"
+        },
+        {
+            "age": 30,
+            "id": 4,
+            "name": "asdfa",
+            "salary": "300.20"
+        }
+    ],
+    "table": "testing"
 }
 ```

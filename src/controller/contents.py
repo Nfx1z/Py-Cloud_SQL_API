@@ -16,18 +16,23 @@ def get_contents_controller(token, table_name):
         SELECT * FROM {table_name};
         """
         cursor.execute(query)
-        contents = cursor.fetchall()
+        rows = cursor.fetchall()
 
-        # Remove double quotes from strings to avoid JSON parsing errors
-        for items in contents:
-            cleaned_result = [item.replace("\"", "") if isinstance(item, str) else item for item in items]
-        # cleaned_result = [[item.replace("\"", "") if isinstance(item, str) else item for item in items] for items in contents]
-        
+        # Get column names from cursor.description
+        columns = [col[0] for col in cursor.description]
+
+        # Create a list of dictionaries, each row mapped to column names
+        result = [dict(zip(columns, row)) for row in rows]
+
         # Close cursor and connection
         cursor.close()
         conn.close()
-
+        
+        # Check if the result is empty
+        if rows is None or len(rows) == 0:
+            return jsonify({"error": f"No data found in table '{table_name}'"}), 404
+        
         # Return results
-        return jsonify({"table": table_name, "contents": cleaned_result}), 200
+        return jsonify({"table": table_name, "contents": result}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
