@@ -25,16 +25,20 @@ gcloud auth application-default print-access-token -->
 run this command to connect
 cloud-sql-proxy --gcloud-auth project-001-cloud-storage:us-central1:ucup **this the right one**
 
-```json
-{
-  "table_name": "employees",
-  "columns": [
-    {"name": "coloumn_name", "type": "data_type"},
-    {"name": "coloumn_name", "type": "data_type"},
-    {"name": "coloumn_name", "type": "data_type"}
-  ]
-}
-```
+1. Create a table
+   - Endpoint: `POST /create-table`
+   - Required `JSON` body:
+
+     ```json
+     {
+       "table": "employees",
+       "columns": [
+         {"name": "coloumn_name", "type": "data_type"},
+         {"name": "coloumn_name", "type": "data_type"},
+         {"name": "coloumn_name", "type": "data_type"}
+       ]
+     }
+     ```
 
 ### Response /contents
 
@@ -69,3 +73,18 @@ cloud-sql-proxy --gcloud-auth project-001-cloud-storage:us-central1:ucup **this 
     "table": "testing"
 }
 ```
+
+1. Insert data into a table
+   - Endpoint: **POST** `/content/insert`
+   - Required `JSON` body:
+
+     ```json
+     {
+          "table": "employees",
+          "columns": ["name", "salary", "age"],
+          "values": [
+             ["John Doe", 50000, 30],
+             ["Jane Doe", 55000, 28]
+          ]
+     }
+     ```
