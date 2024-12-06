@@ -76,3 +76,48 @@ def insert_contents_controller(token, request):
         return jsonify({"message": f"{cursor.rowcount} rows inserted successfully!"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+def update_contents_controller(token, request):
+    try:
+        # Get table name and columns
+        table = request.json.get('table')
+        data = request.json.get('data')
+        conditions = request.json.get('conditions')
+
+        # Validate input parameters
+        if not table or not conditions or not data:
+            return jsonify({"error": "Both 'table', 'conditions', and 'data' are required"}), 400
+        
+        # Verify and Decode JWT token
+        db_name, db_user, user_password = verify_jwt(token)
+
+        # Initiate database connection
+        conn = get_connection(db_name, db_user, user_password)
+        rows = conn.cursor()
+        
+        # Construct the SET part of the UPDATE query dynamically
+        set_clause = ", ".join([f"{key} = %s" for key in data.keys()])
+        
+        # Construct the WHERE part of the UPDATE query dynamically
+        where_clause = " AND ".join([f"{key} = %s" for key in conditions.keys()])
+        
+        # Final query
+        query = f"UPDATE {table} SET {set_clause} WHERE {where_clause}"
+        
+        # Collect the new values for the SET clause and the WHERE clause
+        values = list(data.values()) + list(conditions.values())
+
+        # Execute the query
+        rows.execute(query, values)
+        
+        # Commit the transaction
+        conn.commit()
+        
+        # Close cursor and connection
+        rows.close()
+        conn.close()
+        
+        # Return results
+        return jsonify({"message": f"{rows.rowcount} rows updated successfully!"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

@@ -88,3 +88,20 @@ cloud-sql-proxy --gcloud-auth project-001-cloud-storage:us-central1:ucup **this 
           ]
      }
      ```
+
+2. Update data in a table
+   - Endpoint: **PUT** `/content/update`
+   - Required `JSON` body:
+  
+     ```json
+     {
+         "table": "testing",
+         "data": {
+             "gender": "male",
+             "age": 35
+         },
+         "conditions": {
+             "name": "Doe"
+         }
+     }
+     ```
