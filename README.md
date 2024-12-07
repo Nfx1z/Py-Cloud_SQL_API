@@ -105,3 +105,17 @@ cloud-sql-proxy --gcloud-auth project-001-cloud-storage:us-central1:ucup **this 
          }
      }
      ```
+
+3. Delete data from a table
+   - Endpoint: **DELETE** `/content/delete`
+   - Required `JSON` body:
+
+     ```json
+     {
+        "table": "testing",
+        "conditions": {
+            "age": 30,
+            "salary": 50000
+        }
+     }
+     ```

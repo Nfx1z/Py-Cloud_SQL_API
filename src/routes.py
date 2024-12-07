@@ -13,6 +13,7 @@ from src.controller.contents import (
     get_contents_controller,
     insert_contents_controller,
     update_contents_controller,
+    delete_contents_controller
 )
 
 # Define a Blueprint to organize the routes
@@ -109,3 +110,11 @@ def update_content_in_table():
     if not token:
         return jsonify({'error': 'No token provided'}), 401
     return update_contents_controller(token, request)
+
+@bp.route('/content/delete', methods=['DELETE'])
+def delete_content_from_table():
+    token = request.cookies.get('SQL_TOKEN')
+    # Check if the token is present
+    if not token:
+        return jsonify({'error': 'No token provided'}), 401
+    return delete_contents_controller(token, request)
