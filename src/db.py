@@ -11,6 +11,9 @@ def test_connection(db_name, db_user, user_password):
             database=db_name,
             unix_socket=SOCKET_PATH  # Use the Cloud SQL Unix socket
         )
+
+# ===========================================================================================
+        # without using cloud sql proxy
         # this method also works for local connections
         # conn = mysql.connector.connect(
         #     user=db_user,
@@ -35,6 +38,9 @@ def get_connection(db_name, db_user, user_password):
             database=db_name,
             unix_socket=SOCKET_PATH  # Use the Cloud SQL Unix socket
         )
+
+# ===========================================================================================
+        # without using cloud sql proxy
         # this method also works for local connections
         # conn = mysql.connector.connect(
         #     user=db_user,
