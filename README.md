@@ -1,29 +1,75 @@
 # Cloud SQL API for MySQL
 
-## Setup
+A RESTful API service for managing MySQL databases on Google Cloud SQL.
+
+## Prerequisites
+
+- Google Cloud Platform Account
+- Cloud SQL Instance with `MySQL`
+- `cloud-sql-proxy` installed
+- `gcloud` CLI installed
+
+## Setup & Authentication
+
+### I. Using Cloud SQL Proxy
+
+> [! IMPORTANT]
+> Skip this step if you are not using Cloud SQL Proxy.
+
+1. Download cloud-sql-proxy refer from this [Download](https://cloud.google.com/sql/docs/mysql/sql-proxy#install)
+2. For Windows:
+   - Rename the file to `cloud-sql-proxy.exe`
+   - Put the file into a folder `cloud_sql_proxy` in your `Program Files` folder.
+   - Copy the path of the folder and add it to the system environment variable.
+   - Run `cloud-sql-proxy -v` in CMD to check if the installation is successful.
+3. Enable Cloud SQL Admin API in GCP Console.
+4. Create a service account and download the service account key.
+5. Assign the service account with role `Cloud SQL Admin` in GCP Console.
+6. Put the downloaded service account key into the root folder of this project.
+7. Authenticate with GCP:
+   - `gcloud auth login` to login to your GCP account.
+   - `gcloud config list account` to see your current account.
+   - `gcloud projects list` to see your project list.
+   - `gcloud config set project PROJECT_ID` to set your project ID.
+   - `gcloud config list project` to check if project has been select.
+   - `gcloud auth activate-service-account --key-file=/PATH/TO/YOUR/SERVICE-ACCOUNT.json` to authenticate with GCP.
+8. Run `cloud-sql-proxy --gcloud-auth CONNECTION-NAME` to connect to the Cloud SQL instance.
+9. At `.env` file, set `CLOUD_SQL_CONNECTION_NAME` with your Cloud SQL instance name.
+
+### II. Without Cloud SQL Proxy
+
+1. Enable Cloud SQL Admin API in GCP Console.
+2. At `.env` file, set :
+   - `DB_PORT` with your Cloud SQL instance port.
+   - `DB_IP` with your Cloud SQL instance IP.
+3. In `src/db.py`, comment in line `8-13` and `35-40`:
+
+   ```python
+    conn = mysql.connector.connect(
+        user=db_user,
+        password=user_password,
+        database=db_name,
+        unix_socket=SOCKET_PATH  # Use the Cloud SQL Unix socket
+    )
+   ```
+
+   and uncomment in line `18-24` and `45-51`:
+
+   ```python
+    # conn = mysql.connector.connect(
+    #     user=db_user,
+    #     password=user_password,
+    #     database=db_name,
+    #     host=DB_IP,  # Use the public IP address of the Cloud SQL instance
+    #     port=DB_PORT  # Default MySQL port
+    # )
+   ```
 
 Reinforcement Learning
 
-`cloud-sql-proxy.exe` in `Program Files` Folder and the path to system environment variable.
-Enable Cloud SQL Admin API
-<!-- login to your gcp account -->
-gcloud auth login
-Login with your Google account.
-<!-- see your current account -->
-gcloud config list account
-<!-- see your project list -->
-gcloud projects list
-<!-- set your project id -->
-gcloud config set project PROJECT_ID
-<!--  check if project has been select -->
-gcloud config list project / gcloud config get-value project
-<!-- set this in  -->
-gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-<!-- gcloud auth application-default login
-gcloud auth application-default print-access-token -->
-<!-- cloud-sql-proxy my-project:your-connection-name -->
-run this command to connect
-cloud-sql-proxy --gcloud-auth project-001-cloud-storage:us-central1:ucup **this the right one**
+## Endpoints
+
+### I. Table Management
 
 1. Create a table
    - Endpoint: `POST /create-table`
@@ -73,6 +119,8 @@ cloud-sql-proxy --gcloud-auth project-001-cloud-storage:us-central1:ucup **this 
     "table": "testing"
 }
 ```
+
+### II. Data Management
 
 1. Insert data into a table
    - Endpoint: **POST** `/content/insert`
