@@ -70,7 +70,7 @@ def rename_table():
         return jsonify({'error': 'No table or new_table provided'}), 401
     return rename_table_controller(token, table, new_table)
 
-@bp.route('/table/drop', methods=['DELETE'])
+@bp.route('/table/delete', methods=['DELETE'])
 def drop_table():
     token = request.cookies.get('SQL_TOKEN')
     table = request.json.get('table')
