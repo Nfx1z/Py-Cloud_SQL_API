@@ -11,6 +11,7 @@ from src.controller.tables import (
 )
 from src.controller.contents import (
     get_contents_controller,
+    search_contents_controller,
     insert_contents_controller,
     update_contents_controller,
     delete_contents_controller
@@ -118,3 +119,11 @@ def delete_content_from_table():
     if not token:
         return jsonify({'error': 'No token provided'}), 401
     return delete_contents_controller(token, request)
+
+@bp.route('/content/specific', methods=['GET'])
+def search_content_in_table():
+    token = request.cookies.get('SQL_TOKEN')
+    # Check if the token is present
+    if not token:
+        return jsonify({'error': 'No token provided'}), 401
+    return search_contents_controller(token, request)
