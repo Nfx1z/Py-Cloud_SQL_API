@@ -95,7 +95,7 @@ def get_tables():
         return jsonify({'error': 'No table provided'}), 401
     return get_contents_controller(token, table)
 
-@bp.route('/content/insert', methods=['POST'])
+@bp.route('/content/add', methods=['POST'])
 def insert_into_table():
     token = request.cookies.get('SQL_TOKEN')
     # Check if the token is present
