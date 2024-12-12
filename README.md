@@ -13,7 +13,7 @@ A RESTful API service for managing MySQL databases on Google Cloud SQL.
 
 ### I. Using Cloud SQL Proxy
 
-> [! IMPORTANT]
+> [!IMPORTANT]
 > Skip this step if you are not using Cloud SQL Proxy.
 
 1. Download cloud-sql-proxy refer from this [Download](https://cloud.google.com/sql/docs/mysql/sql-proxy#install)
@@ -56,23 +56,37 @@ A RESTful API service for managing MySQL databases on Google Cloud SQL.
    and uncomment in line `18-24` and `45-51`:
 
    ```python
-    # conn = mysql.connector.connect(
-    #     user=db_user,
-    #     password=user_password,
-    #     database=db_name,
-    #     host=DB_IP,  # Use the public IP address of the Cloud SQL instance
-    #     port=DB_PORT  # Default MySQL port
-    # )
+    conn = mysql.connector.connect(
+        user=db_user,
+        password=user_password,
+        database=db_name,
+        host=DB_IP,  # Use the public IP address of the Cloud SQL instance
+        port=DB_PORT  # Default MySQL port
+    )
    ```
-
-Reinforcement Learning
 
 ## Endpoints
 
+1. Testing connection
+   - endpoint **GET** : `/`
+2. Login database user
+   - endpoint **POST** : `/login`
+   - Reequired `JSON` body:
+
+     ```json
+     {
+        "db_name": "db_name",
+        "db_user": "db_user",
+        "user_password": "user_password"
+     }
+     ```
+
 ### I. Table Management
 
-1. Create a table
-   - Endpoint: `POST /create-table`
+1. Get all tables
+   - Endpoint **GET** : `/tables`
+2. Create a table
+   - Endpoint **POST** : `/table/create`
    - Required `JSON` body:
 
      ```json
@@ -83,6 +97,85 @@ Reinforcement Learning
          {"name": "coloumn_name", "type": "data_type"},
          {"name": "coloumn_name", "type": "data_type"}
        ]
+     }
+     ```
+
+3. Get all columns of a table
+   - Endpoint **GET** : `/table/describe`
+   - Required `JSON` body:
+
+     ```json
+     {
+        "table": "table_name"
+     }
+     ```
+
+4. Rename a table
+   - Endpoint **PUT** : `/table/rename`
+   - Required `JSON` body:
+
+     ```json
+     {
+      "table": "table_name",
+      "new_table": "new_table_name"
+     }
+     ```
+
+5. Delete a table
+   - Endpoint **DELETE** : `/table/delete`
+   - Required `JSON` body:
+
+     ```json
+     {
+        "table": "table_name"
+     }
+     ```
+
+### II. Data Management
+
+1. Insert data into a table
+   - Endpoint **POST** : `/content/add`
+   - Required `JSON` body:
+
+     ```json
+     {
+          "table": "employees",
+          "columns": ["name", "salary", "age"],
+          "values": [
+             ["John Doe", 50000, 30],
+             ["Jane Doe", 55000, 28]
+          ]
+     }
+     ```
+
+2. Update data in a table
+   - Endpoint **PUT** : `/content/update`
+   - Required `JSON` body:
+  
+     ```json
+     {
+         "table": "testing",
+         "data": {
+             "gender": "male",
+             "age": 35
+         },
+         "conditions": {
+             "name": "Doe"
+         }
+     }
+     ```
+
+3. Delete data from a table
+   - Endpoint **DELETE** : `/content/delete`
+   - Required `JSON` body:
+
+     ```json
+     {
+        "table": "testing",
+        "conditions": {
+            "age": 30,
+            "salary": 50000
+        }
      }
      ```
 
@@ -119,51 +212,3 @@ Reinforcement Learning
     "table": "testing"
 }
 ```
-
-### II. Data Management
-
-1. Insert data into a table
-   - Endpoint: **POST** `/content/insert`
-   - Required `JSON` body:
-
-     ```json
-     {
-          "table": "employees",
-          "columns": ["name", "salary", "age"],
-          "values": [
-             ["John Doe", 50000, 30],
-             ["Jane Doe", 55000, 28]
-          ]
-     }
-     ```
-
-2. Update data in a table
-   - Endpoint: **PUT** `/content/update`
-   - Required `JSON` body:
-  
-     ```json
-     {
-         "table": "testing",
-         "data": {
-             "gender": "male",
-             "age": 35
-         },
-         "conditions": {
-             "name": "Doe"
-         }
-     }
-     ```
-
-3. Delete data from a table
-   - Endpoint: **DELETE** `/content/delete`
-   - Required `JSON` body:
-
-     ```json
-     {
-        "table": "testing",
-        "conditions": {
-            "age": 30,
-            "salary": 50000
-        }
-     }
-     ```
