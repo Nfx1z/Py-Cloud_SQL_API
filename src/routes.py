@@ -24,7 +24,7 @@ bp = Blueprint('routes', __name__)
 def based():
     return jsonify({'message': 'Hello, World!'}), 200
 
-@bp.route('/auth/login', methods=['POST'])
+@bp.route('/login', methods=['POST'])
 def user_config():
     return login_controller(request)
 
