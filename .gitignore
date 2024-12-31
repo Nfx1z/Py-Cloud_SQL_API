@@ -3,3 +3,5 @@ key.json
 .venv
 tests
 __pycache__
+.vscode
+.codegpt
