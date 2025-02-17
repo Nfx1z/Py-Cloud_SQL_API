@@ -75,9 +75,9 @@ A RESTful API service for managing MySQL databases on Google Cloud SQL.
 
      ```json
      {
-        "db_name": "db_name",
-        "db_user": "db_user",
-        "user_password": "user_password"
+         "db_name": "db_name",
+         "db_user": "db_user",
+         "user_password": "user_password"
      }
      ```
 
@@ -91,12 +91,12 @@ A RESTful API service for managing MySQL databases on Google Cloud SQL.
 
      ```json
      {
-       "table": "employees",
-       "columns": [
-         {"name": "coloumn_name", "type": "data_type"},
-         {"name": "coloumn_name", "type": "data_type"},
-         {"name": "coloumn_name", "type": "data_type"}
-       ]
+         "table": "employees",
+         "columns": [
+            {"name": "coloumn_name", "type": "data_type"},
+            {"name": "coloumn_name", "type": "data_type"},
+            {"name": "coloumn_name", "type": "data_type"}
+         ]
      }
      ```
 
@@ -106,7 +106,7 @@ A RESTful API service for managing MySQL databases on Google Cloud SQL.
 
      ```json
      {
-        "table": "table_name"
+         "table": "table_name"
      }
      ```
 
@@ -116,8 +116,8 @@ A RESTful API service for managing MySQL databases on Google Cloud SQL.
 
      ```json
      {
-      "table": "table_name",
-      "new_table": "new_table_name"
+         "table": "table_name",
+         "new_table": "new_table_name"
      }
      ```
 
@@ -127,28 +127,39 @@ A RESTful API service for managing MySQL databases on Google Cloud SQL.
 
      ```json
      {
-        "table": "table_name"
+         "table": "table_name"
      }
      ```
 
 ### II. Data Management
 
-1. Insert data into a table
+
+1. Display all data from a table
+   - Endpoint **GET** : `/contents`
+   - Required `JSON` body:
+    
+     ```json
+     {
+         "table": "table_name"
+     }
+     ```
+
+2. Insert data into a table
    - Endpoint **POST** : `/content/add`
    - Required `JSON` body:
 
      ```json
      {
-          "table": "employees",
-          "columns": ["name", "salary", "age"],
-          "values": [
-             ["John Doe", 50000, 30],
-             ["Jane Doe", 55000, 28]
-          ]
+         "table": "employees",
+         "columns": ["name", "salary", "age"],
+         "values": [
+            ["John Doe", 50000, 30],
+            ["Jane Doe", 55000, 28]
+         ]
      }
      ```
 
-2. Update data in a table
+3. Update data in a table
    - Endpoint **PUT** : `/content/update`
    - Required `JSON` body:
   
@@ -156,28 +167,40 @@ A RESTful API service for managing MySQL databases on Google Cloud SQL.
      {
          "table": "testing",
          "data": {
-             "gender": "male",
-             "age": 35
+            "gender": "male",
+            "age": 35
          },
          "conditions": {
-             "name": "Doe"
+            "name": "Doe"
          }
      }
      ```
 
-3. Delete data from a table
+4. Delete data from a table
    - Endpoint **DELETE** : `/content/delete`
    - Required `JSON` body:
 
      ```json
      {
-        "table": "testing",
-        "conditions": {
+         "table": "testing",
+         "conditions": {
             "age": 30,
             "salary": 50000
-        }
+         }
      }
      ```
+
+5. Get specific data from a table
+   - Endpoint **GET** : `/content/specific
+   - Required `JSON` body:
+     ```json
+     {
+         "table": "testing",
+         "conditions": {
+            "age": 30,
+         }
+     }
+
 
 ### Response /contents
 

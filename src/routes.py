@@ -31,7 +31,7 @@ def user_config():
 
 # =============================================================================================
 @bp.route('/tables', methods=['GET'])
-def home():
+def get_tables():
     token = request.cookies.get('SQL_TOKEN')
     # Check if the token is present
     if not token:
@@ -85,7 +85,7 @@ def drop_table():
 
 # =============================================================================================
 @bp.route('/contents', methods=['GET'])
-def get_tables():
+def get_contents():
     token = request.cookies.get('SQL_TOKEN')
     table = request.json.get('table')
     # Check if the token is present
